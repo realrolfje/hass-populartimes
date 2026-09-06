@@ -1,0 +1,34 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "name": "Naam",
+          "address": "Adres"
+        }
+      },
+      "user_with_resolved_place": {
+        "description": "Gevonden locatie: {name}\n\nAdres: {address}",
+        "data": {
+          "name": "Naam",
+          "address": "Adres"
+        }
+      },
+      "confirm": {
+        "description": "Gevonden: {name}\n\nAdres: {address}"
+      },
+      "confirm_without_popularity": {
+        "description": "Gevonden: {name}\n\nAdres: {address}\n\nPopulariteitsgegevens konden nu niet worden opgehaald. De entiteit wordt toch toegevoegd en probeert het opnieuw tijdens updates."
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan geen populariteitsgegevens ophalen. Probeer het later opnieuw.",
+      "not_found": "Er is geen locatie gevonden voor dit adres.",
+      "no_popularity_data": "Populariteitsgegevens konden niet worden opgehaald voor deze locatie.",
+      "unknown": "Onverwachte fout tijdens het controleren van deze locatie."
+    },
+    "abort": {
+      "already_configured": "Deze locatie is al geconfigureerd."
+    }
+  }
+}

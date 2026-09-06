@@ -9,6 +9,8 @@ python3 -m compileall custom_components/populartimes
 python3 -m json.tool hacs.json > /dev/null
 python3 -m json.tool custom_components/populartimes/manifest.json > /dev/null
 python3 -m json.tool custom_components/populartimes/strings.json > /dev/null
+python3 -m json.tool custom_components/populartimes/translations/en.json > /dev/null
+python3 -m json.tool custom_components/populartimes/translations/nl.json > /dev/null
 ```
 
 ## Release process

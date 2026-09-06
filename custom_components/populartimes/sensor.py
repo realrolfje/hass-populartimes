@@ -5,9 +5,9 @@ import logging
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import CONF_ADDRESS, CONF_NAME
 import homeassistant.helpers.config_validation as cv
-import livepopulartimes
 import voluptuous as vol
 
+from .api import get_place
 from .const import CONF_UNIQUE_ID, unique_id_from_address
 
 _LOGGER = logging.getLogger(__name__)
@@ -119,28 +119,10 @@ class PopularTimesSensor(SensorEntity):
             )
             self._last_error = error_message
 
-    def _validate_result(self, result):
-        """Validate the response returned by the popular times library."""
-        if not isinstance(result, dict):
-            raise ValueError("no place found for configured address")
-
-        popular_times = result.get("populartimes")
-        if not isinstance(popular_times, list) or len(popular_times) < 7:
-            raise ValueError("place does not include weekly popularity data")
-
-        for day in popular_times[:7]:
-            if not isinstance(day, dict):
-                raise ValueError("place includes invalid popularity data")
-
-            data = day.get("data")
-            if not isinstance(data, list) or len(data) < 24:
-                raise ValueError("place does not include hourly popularity data")
-
     def update(self):
         """Get the latest data from Google Places API."""
         try:
-            result = livepopulartimes.get_populartimes_by_address(self._address)
-            self._validate_result(result)
+            result = get_place(self._address)
             popularity = result.get('current_popularity', 0)
 
             self._attributes['address'] = result.get("address")
