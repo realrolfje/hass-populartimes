@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Mark sensors unavailable when a place cannot be found or does not return popularity data.
+- Reduce repeated log noise for unchanged lookup failures.
+
 ## 0.30
 
 - Add Home Assistant UI setup through a config flow.
