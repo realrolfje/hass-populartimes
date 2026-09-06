@@ -1,13 +1,14 @@
-"""Support for Google Places API."""
+"""Support for Google Maps popular times sensors."""
 from datetime import datetime, timedelta
-from homeassistant.components.sensor import PLATFORM_SCHEMA
-from homeassistant.const import (CONF_NAME,CONF_ADDRESS)
-from homeassistant.helpers.entity import Entity
-from requests.exceptions import ConnectionError as ConnectError, HTTPError, Timeout
-import homeassistant.helpers.config_validation as cv
 import logging
+
+from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
+from homeassistant.const import CONF_ADDRESS, CONF_NAME
+import homeassistant.helpers.config_validation as cv
 import livepopulartimes
 import voluptuous as vol
+
+from .const import CONF_UNIQUE_ID, unique_id_from_address
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_NAME): cv.string,
         vol.Required(CONF_ADDRESS): cv.string,
+        vol.Optional(CONF_UNIQUE_ID): cv.string,
     }
 )
 
@@ -23,14 +25,30 @@ SCAN_INTERVAL = timedelta(minutes=10)
 def setup_platform(hass, config, add_entities, discovery_info=None):
     name = config['name']
     address = config['address']
-    add_entities([PopularTimesSensor(name, address)], True)
+    unique_id = config.get(CONF_UNIQUE_ID)
+    add_entities([PopularTimesSensor(name, address, unique_id)], True)
 
 
-class PopularTimesSensor(Entity):
+async def async_setup_entry(hass, entry, async_add_entities):
+    """Set up Popular Times sensors from a config entry."""
+    async_add_entities(
+        [
+            PopularTimesSensor(
+                entry.data[CONF_NAME],
+                entry.data[CONF_ADDRESS],
+                entry.unique_id,
+            )
+        ],
+        True,
+    )
 
-    def __init__(self, name, address):
+
+class PopularTimesSensor(SensorEntity):
+
+    def __init__(self, name, address, unique_id=None):
         self._name = name
         self._address = address
+        self._attr_unique_id = unique_id or unique_id_from_address(address)
         self._state = None
 
         self._attributes = {

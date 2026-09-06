@@ -1,0 +1,15 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "name": "Name",
+          "address": "Address"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This place is already configured."
+    }
+  }
+}

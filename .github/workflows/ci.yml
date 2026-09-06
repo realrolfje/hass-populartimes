@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    name: Validate integration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Compile Python files
+        run: python -m compileall custom_components/populartimes
+
+      - name: Validate JSON files
+        run: |
+          python -m json.tool hacs.json > /dev/null
+          python -m json.tool custom_components/populartimes/manifest.json > /dev/null
+          python -m json.tool custom_components/populartimes/strings.json > /dev/null
+
+      - name: Validate repository metadata
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest = json.loads(Path("custom_components/populartimes/manifest.json").read_text())
+          hacs = json.loads(Path("hacs.json").read_text())
+
+          assert manifest["domain"] == "populartimes"
+          assert manifest["name"] == hacs["name"]
+          assert manifest["version"]
+          assert manifest["documentation"]
+          assert manifest["issue_tracker"]
+          PY
